@@ -1,3 +1,5 @@
+//selectors:storeで管理しているstateを参照するための関数
+
 import { createSelector } from 'reselect';
 
 const usersSelector = (state) => state.users;

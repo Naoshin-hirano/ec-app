@@ -1,6 +1,9 @@
 import {
+    //reduxのstoreを作成
     createStore as reduxCreateStore,
+    //分割したReducersをまとめてオブジェクトにまとめてreturnする→stateのデータ構造に合わせる
     combineReducers,
+    //routerをreduxのstoreにmiddlewareとして導入する
     applyMiddleware
 } from "redux";
 import { connectRouter, routerMiddleware } from "connected-react-router";
