@@ -1,4 +1,5 @@
 import React, {useCallback, useState} from 'react';
+import { push } from "connected-react-router";
 import {TextInput, PrimaryButton} from "../components/UIkit";
 import {signUp} from '../reducks/users/operations';
 import {useDispatch} from "react-redux";
@@ -47,11 +48,14 @@ const SignUp = () => {
             fullWidth={true} label={"パスワード確認"} multiline={false} required={true}
             rows={1} value={confirmPassword} type="password" onChange={inputConfirmPassword}
             />
+            <div className="module-spacer--medium"></div>
             <div className="center">
               <PrimaryButton
               label={"アカウントを登録する"}
               onClick={() => dispatch(signUp(username, email, password, confirmPassword))}
               />
+              <div className="module-spacer--medium"></div>
+               <p onClick={() => dispatch(push('/signin'))}>アカウントお持ちの方はこちら</p>
             </div>
         </div>
     )
