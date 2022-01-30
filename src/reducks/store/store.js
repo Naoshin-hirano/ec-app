@@ -5,6 +5,7 @@ import {
     combineReducers,
     //routerをreduxのstoreにmiddlewareとして導入する
     applyMiddleware
+    //operations.jsでactionsの前に非同期処理使うためのもの
 } from "redux";
 import { connectRouter, routerMiddleware } from "connected-react-router";
 import thunk from 'redux-thunk';

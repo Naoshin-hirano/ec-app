@@ -5,7 +5,7 @@ import {signOut} from '../reducks/users/operations';
 
 const Home = () => {
     const dispatch = useDispatch()
-    //useSelectorでreact全体のstateを受け取る
+    //useSelectorでreact全体のstateを"state"という変数で受け取る
     const selector = useSelector(state => state);
     const uid = getUserId(selector);
     const username = getUserName(selector);
