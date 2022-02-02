@@ -3,7 +3,7 @@ import IconButton from '@material-ui/core/IconButton';
 import AddPhotoAlternateIcon from '@material-ui/icons/AddPhotoAlternate';
 import {makeStyles} from "@material-ui/styles";
 import {storage} from "../../firebase/index";
-import ImagePreview from "./ImagePreview";
+import {ImagePreview} from "../Products";
 
 const useStyles = makeStyles({
     icon: {
@@ -15,8 +15,8 @@ const useStyles = makeStyles({
 const ImageArea = (props) => {
     const classes = useStyles();
 
-    
-    //イメージ削除
+
+    //イメージ削除。asynchronous:非同期という意味なので、storageなどのAPI使用しているのでasync使う。
     const deleteImage = useCallback(async(id) => {
         const ret = window.confirm("この画像を削除しますか？")
         if(!ret){
