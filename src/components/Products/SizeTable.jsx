@@ -25,13 +25,13 @@ const SizeTable = (props) => {
             <Table aria-label="simple table">
                 <TableBody>
                     {props.sizes.length > 0 && (
-                        props.sizes.map((item, index) => (
+                        props.sizes.map((item) => (
                             <TableRow key={item.size}>
                                 <TableCell component="th" scope="row">{item.size}</TableCell>
                                 <TableCell>残り{item.quantity}点</TableCell>
                                 <TableCell className={classes.iconCell}>
                                     {item.quantity > 0 ? (
-                                        <IconButton
+                                        <IconButton onClick={() => props.addProduct(item.size)}
                                             className={classes.iconCell}>
                                             <ShoppingCartIcon />
                                         </IconButton>
