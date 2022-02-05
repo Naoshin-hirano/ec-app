@@ -55,6 +55,8 @@ const ProductDetail = () => {
 
     const dispatch = useDispatch();
 
+    //[]のproductに変更がない限り中の処理を再生成しない。
+    //addProductの処理意外の変更でSizeTableを再レンダリングしない
     const addProduct = useCallback((selectedSize) => {
         const timstamp = FirebaseTimestamp.now();
         dispatch(addProductToCart({

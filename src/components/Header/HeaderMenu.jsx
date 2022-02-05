@@ -8,6 +8,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import {getProductsInCart, getUserId} from "../../reducks/users/selectors";
 import {db} from "../../firebase/index"
 import {fetchProductsInCart} from '../../reducks/users/operations';
+import {push} from 'connected-react-router';
 
 const HeaderMenu = (props) => {
     const dispatch = useDispatch();
@@ -21,8 +22,10 @@ const HeaderMenu = (props) => {
               snapshots.docChanges().forEach(change => {
                   const product = change.doc.data();
                   const changeType = change.type;
+                  console.log(changeType)
 
-                  //? modifiedとremovedになるのはどんなときか。
+                  //dbの変更をリッスンしてそのステータスによってstoreの中身もリアルタイムに変更
+                  //CartListItemで削除するのはdbだけでstoreを削除しなくもOK
                   switch(changeType){
                       case 'added' :
                         productsInCart.push(product);
@@ -47,7 +50,7 @@ const HeaderMenu = (props) => {
 
     return (
         <>
-           <IconButton>
+           <IconButton onClick={() => dispatch(push('/cart'))}>
                <Badge badgeContent={productsInCart.length} color="secondary">
                   <ShoppingCartIcon />
                </Badge>
