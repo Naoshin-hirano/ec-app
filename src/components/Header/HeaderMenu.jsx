@@ -22,7 +22,6 @@ const HeaderMenu = (props) => {
               snapshots.docChanges().forEach(change => {
                   const product = change.doc.data();
                   const changeType = change.type;
-                  console.log(changeType)
 
                   //dbの変更をリッスンしてそのステータスによってstoreの中身もリアルタイムに変更
                   //CartListItemで削除するのはdbだけでstoreを削除しなくもOK

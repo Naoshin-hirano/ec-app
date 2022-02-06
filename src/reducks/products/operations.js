@@ -30,6 +30,95 @@ export const fetchProducts = () => {
     }
 }
 
+export const orderProduct = (productsInCart, price) => {
+    return async (dispatch, getState) => {
+        const uid = getState().users.uid;
+        const userRef = db.collection('users').doc(uid);
+        const timestamp = FirebaseTimestamp.now();
+
+        let products = [];
+        let soldOutProducts = [];
+        
+        const batch = db.batch();
+
+        for(const product of productsInCart){
+            const snapshot = await productsRef.doc(product.productId).get();
+            const sizes = snapshot.data().sizes;
+
+            //size.size: firestoreのproductsにあるsizesをループさせたsize (在庫)
+            //product.size: firestoreのusersにあるcartの中身 (カートに入れた中身)
+            const updatedSizes = sizes.map(size => {
+                if(size.size === product.size){
+                    if(size.quantity === 0){
+                        soldOutProducts.push(product.name);
+                        return size
+                    }
+                    return {
+                        size: size.size,
+                        quantity: size.quantity - 1
+                    }
+                } else {
+                    return size
+                }
+            });
+
+            //注文履歴の商品内容
+            products.push({
+                id: product.productId,
+                images: product.images,
+                name: product.name,
+                price: product.price,
+                size: product.size
+            });
+
+            //在庫のsizeとquantityを更新
+            batch.update(
+                productsRef.doc(product.productId),
+                {sizes: updatedSizes}
+            )
+
+            //カートにある商品を削除
+            batch.delete(
+                userRef.collection('cart').doc(product.cartId)
+            )
+        }
+
+        if(soldOutProducts.length > 0){
+            const errorMessage = (soldOutProducts.length > 1) ?
+                                 soldOutProducts.join('と') :
+                                 soldOutProducts[0];
+            alert('大変申し訳ございません。' + errorMessage + 'が在庫切れとなったため、注文処理を中断しました。' )
+            return false
+        }else{
+            //注文処理が成功したあとの処理
+            batch.commit()
+                 .then(() => {
+                     //注文履歴のdocument
+                     const orderRef = userRef.collection('orders').doc();
+                     //toDate(): 'YYYY-MM-DD' のようなDATE型へ変換
+                     const date = timestamp.toDate();
+                     //fromDate: timestamp型に変換
+                     const shippingDate = FirebaseTimestamp.fromDate(new Date(date.setDate(date.getDate() + 3)));
+
+                     const history = {
+                         amount: price,
+                         created_at: timestamp,
+                         id: orderRef.id,
+                         products: products,
+                         shipping_date: shippingDate,
+                         updated_at: timestamp
+                     }
+
+                     orderRef.set(history);
+                     dispatch(push('/order/complete'));
+
+                 }).catch(() => {
+                     alert('注文処理に失敗しました。通信環境をご確認のうえ、もう一度お試しください。')
+                 })
+        }
+    }
+}
+
 export const saveProduct = (id, name, description, category, gender, price, images, sizes) => {
     return async (dispatch) => {
         const timestamp = FirebaseTimestamp.now()
