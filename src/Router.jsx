@@ -1,7 +1,7 @@
 import React from 'react'
 import { Route, Switch } from 'react-router';
 //import { Home } from './Home'と１つ１つimportするのをtemplatesのindex.jsにまとめて書くことで防ぐ 
-import { ProductList, SignUp, SignIn, Reset, ProductEdit, ProductDetail, CartList, OrderConfirm } from './templates';
+import { ProductList, SignUp, SignIn, Reset, ProductEdit, ProductDetail, CartList, OrderConfirm, OrderHistory } from './templates';
 import Auth from './Auth';
 
 const Router = () => {
@@ -18,6 +18,7 @@ const Router = () => {
 
                 <Route exact path="/cart" component={CartList} />
                 <Route exact path="/order/confirm" component={OrderConfirm} />
+                <Route exact path="/order/history" component={OrderHistory} />
             </Auth>
         </Switch>
     );

@@ -101,7 +101,7 @@ export const orderProduct = (productsInCart, price) => {
                      const shippingDate = FirebaseTimestamp.fromDate(new Date(date.setDate(date.getDate() + 3)));
 
                      const history = {
-                         amount: price,
+                         price: price,
                          created_at: timestamp,
                          id: orderRef.id,
                          products: products,

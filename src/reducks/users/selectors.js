@@ -12,10 +12,13 @@ export const getIsSignedIn = createSelector(
     state => state.isSignedIn
 )
 
-export const getProductsInCart = createSelector(
-    //stateの内、自分の関心のあるツリー
+export const getOrdersHistory = createSelector(
     [usersSelector],
-    //そのツリーの中のパラメータの何を使いたいか
+    state => state.orders
+)
+
+export const getProductsInCart = createSelector(
+    [usersSelector],
     state => state.cart
 )
 
