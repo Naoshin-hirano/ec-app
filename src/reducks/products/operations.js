@@ -16,17 +16,22 @@ export const deleteProduct = (id) => {
     }
 }
 
-export const fetchProducts = () => {
+export const fetchProducts = (gender, category) => {
     return async (dispatch) => {
-        productsRef.orderBy('updated_at', 'desc').get()
-         .then(snapshots => {
-             const productList = []
-             snapshots.forEach(snapshot => {
-                 const product = snapshot.data();
-                 productList.push(product)
-             })
-             dispatch(fetchProductsAction(productList))
-         })
+        let query = productsRef.orderBy('updated_at', 'desc');
+        //productsの'gender'というフィールドに今回の引数gender(メンズでクリックしたならメンズ)が合致するものを抽出
+        query = (gender !== "") ? query.where('gender', '==', gender) : query;
+        query = (category !== "") ? query.where('category', '==', category) : query;
+
+        query.get()
+            .then(snapshots => {
+                const productList = []
+                snapshots.forEach(snapshot => {
+                    const product = snapshot.data();
+                    productList.push(product)
+                })
+                dispatch(fetchProductsAction(productList))
+            })
     }
 }
 

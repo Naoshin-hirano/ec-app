@@ -6,7 +6,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import {makeStyles, createStyles} from '@material-ui/core/styles';
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 import {push} from 'connected-react-router';
 import {TextInput} from "../UIkit";
 import IconButton from "@material-ui/core/IconButton";
@@ -16,6 +16,7 @@ import HistoryIcon from '@material-ui/icons/History';
 import PersonIcon from '@material-ui/icons/Person';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import {signOut} from '../../reducks/users/operations';
+import {db} from "../../firebase/index"
 
 const useStyles = makeStyles((theme) =>
     createStyles({
@@ -50,6 +51,7 @@ const ClosableDrawer = (props) => {
         setKeyword(event.target.value)
     }, [setKeyword]);
 
+    //遷移先とフィルタがここに集約される
     const selectMenu = (event, path) => {
         dispatch(push(path));
         props.onClose(event);
@@ -61,6 +63,33 @@ const ClosableDrawer = (props) => {
         {func: selectMenu, label: "注文履歴",    icon: <HistoryIcon />,   id: "history",  value: "/order/history"},
         {func: selectMenu, label: "プロフィール", icon: <PersonIcon />,    id: "profile",  value: "/user/mypage"},
     ]
+
+    //drawerのfilterの初期値。これにパンツやトップスをDBから取得して追加表示
+    const [filters, setFilters] = useState([
+        {func: selectMenu, label: "すべて",     id: "all",    value: "/"},
+        {func: selectMenu, label: "メンズ",     id: "male",   value: "/?gender=male"},
+        {func: selectMenu, label: "レディース",  id: "female", value: "/?gender=female"}
+    ])
+
+    useEffect(() => {
+        db.collection('categories')
+          .orderBy('order', 'asc')
+          .get()
+          .then(snapshots => {
+              const list = []
+              snapshots.forEach(snapshot => {
+                  const category = snapshot.data()
+                  list.push({
+                    func: selectMenu, 
+                    label: category.name,
+                    id: category.id,
+                    value: `/?category=${category.id}`
+                  })
+              })
+              setFilters(prevState => [...prevState, ...list])
+          })
+    }, []);
+
 
     //openないとメニュー開かない→ drawerのopenはmaterialUTに独自についてくる属性の１つ。props.openはbooleanで渡ってくるので、そのtrue/falseかでopen属性が開くか閉じるかを決めている
     return (
@@ -104,6 +133,17 @@ const ClosableDrawer = (props) => {
                             </ListItemIcon>
                             <ListItemText primary={"Logout"} />
                         </ListItem>
+                    </List>
+                    <Divider />
+                    <List>
+                        {filters.map((filter, index) => (
+                            <ListItem
+                            button
+                            key={index}
+                            onClick={(e) => filter.func(e, filter.value)}>
+                                <ListItemText primary={filter.label} />
+                            </ListItem>
+                        ))}
                     </List>
                 </div>
             </Drawer>
