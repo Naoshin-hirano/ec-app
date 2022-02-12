@@ -9,6 +9,8 @@ import IconButton from "@material-ui/core/IconButton";
 import {useSelector} from "react-redux";
 import {getUserId} from "../../reducks/users/selectors";
 import {db} from "../../firebase/index"
+import {push} from "connected-react-router"
+import {useDispatch} from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
     list: {
@@ -27,6 +29,7 @@ const useStyles = makeStyles((theme) => ({
 
 const FavListItem = (props) => {
     const classes = useStyles();
+    const dispatch = useDispatch();
     const selector = useSelector(state => state);
     const uid = getUserId(selector);
 
@@ -44,10 +47,10 @@ const FavListItem = (props) => {
     return (
         <>
            <ListItem className={classes.list}>
-               <ListItemAvatar>
+               <ListItemAvatar onClick={() => dispatch(push('/product/' + props.product.productId))}>
                   <img className={classes.image} src={image} alt=""/>
                </ListItemAvatar>
-               <div className={classes.text}>
+               <div onClick={() => dispatch(push('/product/' + props.product.productId))} className={classes.text}>
                    <ListItemText
                    primary={name}
                    secondary={"サイズ" + size}
@@ -56,9 +59,9 @@ const FavListItem = (props) => {
                    primary={"¥" + price}
                    />
                </div>
-               <IconButton onClick={() => removeProductFromCart(props.product.favoriteId)}>
+               {/* <IconButton onClick={() => removeProductFromCart(props.product.favoriteId)}>
                    <DeleteIcon/>
-               </IconButton>
+               </IconButton> */}
            </ListItem>
            <Divider />
         </>
