@@ -55,21 +55,21 @@ const ClosableDrawer = (props) => {
     const selectMenu = (event, path) => {
         dispatch(push(path));
         props.onClose(event);
-    }
+    };
 
     //valueが上のselectMenuのpathとなる
     const menus = [
         {func: selectMenu, label: "商品登録",    icon: <AddCircleIcon />, id: "register", value: "/product/edit"},
         {func: selectMenu, label: "注文履歴",    icon: <HistoryIcon />,   id: "history",  value: "/order/history"},
         {func: selectMenu, label: "プロフィール", icon: <PersonIcon />,    id: "profile",  value: "/user/mypage"},
-    ]
+    ];
 
     //drawerのfilterの初期値。これにパンツやトップスをDBから取得して追加表示
     const [filters, setFilters] = useState([
         {func: selectMenu, label: "すべて",     id: "all",    value: "/"},
         {func: selectMenu, label: "メンズ",     id: "male",   value: "/?gender=male"},
         {func: selectMenu, label: "レディース",  id: "female", value: "/?gender=female"}
-    ])
+    ]);
 
     useEffect(() => {
         db.collection('categories')
@@ -103,7 +103,6 @@ const ClosableDrawer = (props) => {
             classes={{paper: classes.drawerPaper}}
             ModalProps={{keepMounted: true}}
             >
-                {/* メニューをエンターするとdrawerが閉じる */}
                 <div
                 onClose={(e) => props.onClose(e)}
                 onKeyDown={(e) => props.onClose(e)}

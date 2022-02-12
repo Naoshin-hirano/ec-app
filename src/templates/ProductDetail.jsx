@@ -4,7 +4,9 @@ import {useSelector, useDispatch} from "react-redux";
 import {db, FirebaseTimestamp} from "../firebase";
 import HTMLReactParser from "html-react-parser";
 import {SizeTable, ImageSwiper } from "../components/Products";
-import {addProductToCart} from '../reducks/users/operations'
+import {getUserId} from "../reducks/users/selectors";
+import {addProductToCart, addProductToFavorite} from '../reducks/users/operations'
+import {toggleSizeFavorite} from '../reducks/products/operations'
 
 const useStyles = makeStyles((theme) => ({
     sliderBox: {
@@ -40,10 +42,12 @@ const useStyles = makeStyles((theme) => ({
 const ProductDetail = () => {
     const classes = useStyles()
     const selector = useSelector(state => state)
+    const uid = getUserId(selector);
     const path = selector.router.location.pathname
     const id = path.split('/product/')[1]
 
     const [product, setProduct] = useState(null);
+    const [sizeArr, setSizeArr] = useState([]);
 
     const returnCodeToBr = (text) => {
         if (text === "") {
@@ -73,12 +77,45 @@ const ProductDetail = () => {
 
     }, [product]);
 
+
+    //お気に入りを登録
+    const addFavorite = useCallback((selectedSize, index) => {
+        const timstamp = FirebaseTimestamp.now();
+        dispatch(addProductToFavorite({
+            added_at: timstamp,
+            description: product.description,
+            gender: product.gender,
+            images: product.images,
+            name: product.name,
+            price: product.price,
+            productId: product.id,
+            size: selectedSize
+        }));
+        sizeArr[index].fav = true;
+        setSizeArr(sizeArr)
+
+        dispatch(toggleSizeFavorite(product.id, index));
+    }, [setSizeArr, sizeArr]);
+
+
+    //お気に入りを削除
+    const deleteFavorite = useCallback( async (index, favId) => {
+       await db.collection('users').doc(uid).collection('favorite').doc(favId).delete()
+       sizeArr[index].fav = false;
+       setSizeArr(sizeArr)
+       dispatch(toggleSizeFavorite(product.id, index))
+    }, [setSizeArr, sizeArr]);
+
     useEffect(() => {
         db.collection('products').doc(id).get().then(doc => {
             const data = doc.data()
+            //この画面の商品をセット
             setProduct(data)
+            //この画面の商品のサイズ情報をセット
+            setSizeArr([...data.sizes])
         })
     },[])
+
 
     return (
         <section className="c-section-wrapin">
@@ -91,7 +128,14 @@ const ProductDetail = () => {
                         <h2 className="u-text__headline">{product.name}</h2>
                         <p className={classes.price}>¥{(product.price).toLocaleString()}</p>
                         <div className="module-spacer--small"/>
-                        <SizeTable addProduct={addProduct} sizes={product.sizes} />
+                        <SizeTable
+                        id={id}
+                        sizeArr={sizeArr}
+                        setSizeArr={setSizeArr}
+                        deleteFavorite={deleteFavorite}
+                        addProduct={addProduct} 
+                        addFavorite={addFavorite}
+                        sizes={product.sizes} />
                         <div className="module-spacer--small"/>
                         <p>{returnCodeToBr(product.description)}</p>
                     </div>

@@ -8,6 +8,11 @@ export const UsersReducer = (state = initialState.users, action) => {
                 ...state,
                 orders: [...action.payload]
             }
+        case Actions.FETCH_FAVORITE_PRODUCTS:
+            return {
+                ...state,
+                favorits: [...action.payload]
+            }
         case Actions.FETCH_PRODUCTS_IN_CART:
             //cartの配列の内容を更新する
             return {

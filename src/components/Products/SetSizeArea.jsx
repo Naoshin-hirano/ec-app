@@ -47,14 +47,14 @@ const SetSizeArea = (props) => {
             //表示されているサイズの段とindexが一致している。追加するとindexに+1されるため。
             if(index === props.sizes.length){
                 //prevState:今までの状態の段。それに新しい段を追加
-                props.setSizes(prevState => [...prevState, {size: size, quantity: quantity}])
+                props.setSizes(prevState => [...prevState, {size: size, quantity: quantity, fav: false}])
                 setIndex(index + 1)
                 setSize("")
                 setQuantity(0)
             }else{
                 const newSizes = props.sizes
                 //newSizes[index]:編集しているsize段。それに今入力したsizeとquantityを代入。
-                newSizes[index] = {size: size, quantity: quantity}
+                newSizes[index] = {size: size, quantity: quantity, fav: false}
                 props.setSizes(newSizes)
                 setIndex(newSizes.length)
                 setSize("")

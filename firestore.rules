@@ -11,6 +11,10 @@ service cloud.firestore {
         allow read, write: if request.auth.uid == userId;
       }
 
+      match /favorite/{favId} {
+        allow read, write: if request.auth.uid == userId;
+      }
+
       match /orders/{orderId} {
         allow read, write: if request.auth.uid == userId;
       }
@@ -19,6 +23,18 @@ service cloud.firestore {
     match /products/{productId} {
       allow read: if request.auth.uid != null;
       allow write: if request.auth.uid != null;
+
+      match /sizes/{sizeId} {
+        allow read: if request.auth.uid != null;
+        allow update: if request.auth.uid == userId;
+        allow delete: if request.auth.uid == userId;
+
+        match /fav/{favId} {
+          allow read: if request.auth.uid != null;
+          allow update: if request.auth.uid == userId;
+          allow delete: if request.auth.uid == userId;
+        }
+      }
     }
 
     match /categories/{categoryId} {

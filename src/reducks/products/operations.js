@@ -4,6 +4,38 @@ import {fetchProductsAction, deleteProductAction } from "./actions";
 
 const productsRef = db.collection('products')
 
+export const toggleSizeFavorite = (productsId, index) => {
+    return async (dispatch) => {
+        const snapshot = await productsRef.doc(productsId).get();
+        const sizes = snapshot.data().sizes;
+        const updatedSizes = sizes.map(size => {
+            if(sizes.indexOf(size) === index){
+                if (size.fav) {
+                    return {
+                        fav: false,
+                        size: size.size,
+                        quantity: size.quantity
+                    }
+                } else {
+                    return {
+                        fav: true,
+                        size: size.size,
+                        quantity: size.quantity
+                    }
+                }
+            } else {
+                return size
+            }
+        });
+
+        productsRef.doc(productsId).update({
+            sizes: updatedSizes
+        });
+
+        dispatch(push(`/product/${productsId}`));
+    }
+}
+
 export const deleteProduct = (id) => {
     return async (dispatch, getState) => {
         productsRef.doc(id).delete()

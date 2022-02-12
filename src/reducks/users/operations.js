@@ -1,8 +1,18 @@
 //opereations→acitions
 
-import {signInAction, signOutAction, fetchProductsInCartAction, fetchOrdersHistoryAction} from "./actions";
+import {signInAction, signOutAction, fetchProductsInCartAction, fetchFavoriteProductsAction, fetchOrdersHistoryAction} from "./actions";
 import {push} from 'connected-react-router';
 import {auth, db, FirebaseTimestamp} from '../../firebase/index';
+
+export const addProductToFavorite = (addedProduct) => {
+    return async (dispatch, getState) => {
+        const uid = getState().users.uid;
+        const favRef = db.collection('users').doc(uid).collection('favorite').doc();
+        addedProduct['favoriteId'] = favRef.id;
+        await favRef.set(addedProduct);
+        dispatch(push(`/product/${addedProduct.productId}`))
+    }
+}
 
 export const addProductToCart = (addedProduct) => {
     return async (dispatch, getState) => {
@@ -31,6 +41,12 @@ export const fetchOrdersHistory = () => {
 
               dispatch(fetchOrdersHistoryAction(list))
           })
+    }
+}
+
+export const fetchFavoriteProducts = (products) => {
+    return async (dispatch) => {
+        dispatch(fetchFavoriteProductsAction(products));
     }
 }
 
