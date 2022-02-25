@@ -59,9 +59,9 @@ const FavListItem = (props) => {
                    primary={"¥" + price}
                    />
                </div>
-               {/* <IconButton onClick={() => removeProductFromCart(props.product.favoriteId)}>
+               <IconButton onClick={() => removeProductFromCart(props.product.favoriteId)}>
                    <DeleteIcon/>
-               </IconButton> */}
+               </IconButton>
            </ListItem>
            <Divider />
         </>

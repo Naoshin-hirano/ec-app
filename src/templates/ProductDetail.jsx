@@ -79,6 +79,8 @@ const ProductDetail = () => {
 
 
     //お気に入りを登録
+    //[]をproductにするとproduct意外で再再レンダリングされなくなるので、sizeArrを変更しても表示が変化しなくなる
+    // ? setSizeArr のみだとエラー出るのはなぜ
     const addFavorite = useCallback((selectedSize, index) => {
         const timstamp = FirebaseTimestamp.now();
         dispatch(addProductToFavorite({
@@ -95,7 +97,7 @@ const ProductDetail = () => {
         setSizeArr(sizeArr)
 
         dispatch(toggleSizeFavorite(product.id, index));
-    }, [setSizeArr, sizeArr]);
+    }, [sizeArr]);
 
 
     //お気に入りを削除
@@ -104,7 +106,7 @@ const ProductDetail = () => {
        sizeArr[index].fav = false;
        setSizeArr(sizeArr)
        dispatch(toggleSizeFavorite(product.id, index))
-    }, [setSizeArr, sizeArr]);
+    }, [sizeArr]);
 
     useEffect(() => {
         db.collection('products').doc(id).get().then(doc => {
@@ -130,8 +132,6 @@ const ProductDetail = () => {
                         <div className="module-spacer--small"/>
                         <SizeTable
                         id={id}
-                        sizeArr={sizeArr}
-                        setSizeArr={setSizeArr}
                         deleteFavorite={deleteFavorite}
                         addProduct={addProduct} 
                         addFavorite={addFavorite}

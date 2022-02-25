@@ -58,7 +58,7 @@ const SizeTable = (props) => {
                                 <TableCell className={classes.iconCell}>
                                         {item.fav ? (
                                             <IconButton onClick={() => props.deleteFavorite(index, favId(item.size))} className={classes.iconCell}>
-                                              <FavoriteIcon />
+                                              <FavoriteIcon style={{ color: "red" }}/>
                                             </IconButton>
                                         ) : (
                                             <IconButton onClick={() => props.addFavorite(item.size, index)} className={classes.iconCell}>
